@@ -1,0 +1,24 @@
+name: 'paradicms etl'
+description: 'Run a paradicms ETL pipeline'
+author: 'Minor Gordon'
+branding:
+  icon: 'loader'
+inputs:
+  debug:
+    description: Debug the action
+    required: false
+  input_data:
+    description: Path to your input data. It can be a directory or a file, depending on the input format.
+    required: true
+  input_format:
+    description: The format of the input data.
+    required: true
+  output_data:
+    description: Path to your output data. It can be a directory or a file, depending on the output format.
+    required: true
+  output_format:
+    description: The desired format of the output data.
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
