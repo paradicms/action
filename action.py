@@ -57,10 +57,10 @@ class Action:
 
     def __create_loader(self) -> _Loader:
         if self.__inputs.output_format.endswith("-rdf"):
-            rdf_file_path = Path(self.__inputs.output_data)
+            rdf_file_path = Path(self.__inputs.output_data).absolute()
             rdf_format = self.__inputs.output_format[: -len("-rdf")]
             self.__mkdir(rdf_file_path.parent)
-            self.__logger.debug(
+            self.__logger.info(
                 "RDF file loader: format=%s, file path=%s", rdf_format, rdf_file_path
             )
             return RdfFileLoader(
