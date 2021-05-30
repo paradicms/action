@@ -56,10 +56,15 @@ class Action:
         self.__pipeline_id = self.__inputs.id
 
     def __create_loader(self) -> _Loader:
-        if self.__inputs.output_format.endswith("-rdf"):
-            rdf_file_path = Path(self.__inputs.output_data).absolute()
-            rdf_format = self.__inputs.output_format[: -len("-rdf")]
-            self.__mkdir(rdf_file_path.parent)
+        output_format = self.__inputs.output_format.lower()
+        if output_format.endswith("-rdf"):
+            rdf_format = output_format[: -len("-rdf")]
+            output_data_path = Path(self.__inputs.output_data).absolute()
+            if output_data_path.is_dir():
+                rdf_file_path = output_data_path / ("data." + rdf_format)
+            else:
+                rdf_file_path = output_data_path
+                self.__mkdir(rdf_file_path.parent)
             self.__logger.info(
                 "RDF file loader: format=%s, file path=%s", rdf_format, rdf_file_path
             )
