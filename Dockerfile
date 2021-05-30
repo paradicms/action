@@ -1,4 +1,4 @@
-FROM docker.pkg.github.com/paradicms/paradicms/paradicms:latest
+FROM ghcr.io/paradicms/paradicms:latest
 
 ADD action.py /action.py
 
