@@ -22,6 +22,7 @@ from paradicms_etl.transformers.markdown_directory_transformer import (
 class Action:
     @dataclass(frozen=True)
     class Inputs:
+        id: str
         input_data: str
         input_format: str
         output_data: str
@@ -38,13 +39,9 @@ class Action:
                     environ_value = environ_value.strip()
                     if environ_value:
                         kwds[field.name] = environ_value
+            if "id" not in kwds:
+                kwds["id"] = os.environ["GITHUB_REPOSITORY"].rsplit("/", 1)[-1]
             return cls(**kwds)
-
-    class __Pipeline(_Pipeline):
-        ID = "action"
-
-        def __init__(self, **kwds):
-            _Pipeline.__init__(self, id=self.ID, **kwds)
 
     def __init__(self, inputs: Optional[Inputs] = None):
         if inputs is None:
@@ -56,6 +53,7 @@ class Action:
             logging.basicConfig(level=logging.INFO)
         self.__logger = logging.getLogger(self.__class__.__name__)
         self.__logger.debug("inputs: %s", self.__inputs)
+        self.__pipeline_id = self.__inputs.id
 
     def __create_loader(self) -> _Loader:
         if self.__inputs.output_format.endswith("-rdf"):
@@ -68,7 +66,7 @@ class Action:
             return RdfFileLoader(
                 file_path=rdf_file_path,
                 format=rdf_format,
-                pipeline_id=self.__Pipeline.ID,
+                pipeline_id=self.__pipeline_id,
             )
         else:
             raise NotImplementedError(self.__inputs.output_format)
@@ -80,14 +78,15 @@ class Action:
                 f"Markdown directory {extracted_data_dir_path} does not exist"
             )
 
-        return self.__Pipeline(
+        return _Pipeline(
             extractor=MarkdownDirectoryExtractor(
                 extracted_data_dir_path=extracted_data_dir_path,
-                pipeline_id=self.__Pipeline.ID,
+                pipeline_id=self.__pipeline_id,
             ),
+            id=self.__pipeline_id,
             loader=loader,
             transformer=MarkdownDirectoryTransformer(
-                pipeline_id=self.__Pipeline.ID,
+                pipeline_id=self.__pipeline_id,
             ),
         )
 

@@ -7,6 +7,9 @@ inputs:
   debug:
     description: Debug the action
     required: false
+  id:
+    description: Pipeline id. Defaults to the name of the repository.
+    required: false
   input_data:
     description: Path to your input data. It can be a directory or a file, depending on the input format.
     required: true
