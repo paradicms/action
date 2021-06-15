@@ -80,6 +80,8 @@ class Action:
         return GuiLoader(
             deployer=FsGuiDeployer(gui_deploy_dir_path=gui_deploy_dir_path),
             loaded_data_dir_path=self.__temp_dir_path,
+            gui=gui,
+            pipeline_id=self.__pipeline_id,
         )
 
     def __create_loader(self) -> _Loader:
