@@ -52,6 +52,14 @@ class Action:
                 kwds["id"] = os.environ["GITHUB_REPOSITORY"].rsplit("/", 1)[-1]
             return cls(**kwds)
 
+        def __post_init__(self):
+            for field in dataclasses.fields(self):
+                if field.name == "debug":
+                    continue
+                value = getattr(self, field.name)
+                if not value.strip():
+                    raise ValueError("empty/blank " + field.name)
+
     def __init__(self, *, inputs: Inputs, temp_dir_path: Path):
         self.__inputs = inputs
         if self.__inputs.debug:
