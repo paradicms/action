@@ -97,7 +97,14 @@ class Action:
         )
 
         return GuiLoader(
-            deployer=FsGuiDeployer(gui_deploy_dir_path=gui_deploy_dir_path),
+            deployer=FsGuiDeployer(
+                # We're running in an environment that's never been used before, so no need to archive
+                archive=False,
+                # We're also running in Docker, which usually means that the GUI's out directory is on a different mount
+                # than the directory we're "deploying" to, and we need to use copy instead of rename.
+                copy=True,
+                gui_deploy_dir_path=gui_deploy_dir_path,
+            ),
             loaded_data_dir_path=self.__temp_dir_path,
             gui=gui,
             pipeline_id=self.__pipeline_id,
