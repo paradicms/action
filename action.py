@@ -45,7 +45,11 @@ class Action:
                     required=field.name != "debug",
                 )
             args = argument_parser.parse_args()
-            kwds = vars(args).copy()
+            kwds = {
+                key: value
+                for key, value in vars(args).items()
+                if value and value.strip()
+            }
             for ignore_key in ("c",):
                 kwds.pop(ignore_key, None)
             if "id" not in kwds:
