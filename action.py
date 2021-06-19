@@ -31,7 +31,7 @@ class Action:
         output_data: str
         output_format: str
         debug: str = ""
-        gui_base_path: str = ""
+        gui_base_url_path: str = ""
 
         @classmethod
         def from_args(cls):
@@ -98,16 +98,14 @@ class Action:
                 self.__logger.debug("gui_dir_path %s does not exist", gui_dir_path)
 
         self.__logger.info(
-            "GUI loader: gui=%s, deploy path=%s, base path=%s",
+            "GUI loader: gui=%s, deploy path=%s, base URL path=%s",
             gui,
             gui_deploy_dir_path,
-            self.__inputs.gui_base_path,
+            self.__inputs.gui_base_url_path,
         )
 
-        if self.__inputs.gui_base_path:
-            os.environ["GUI_BASE_PATH"] = self.__inputs.gui_base_path
-
         return GuiLoader(
+            base_url_path=self.__inputs.gui_base_url_path,
             deployer=FsGuiDeployer(
                 # We're running in an environment that's never been used before, so no need to archive
                 archive=False,
