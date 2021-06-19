@@ -73,6 +73,17 @@ class Action:
 
         gui_deploy_dir_path = Path(self.__inputs.output_data).absolute()
 
+        for gui_dir_path in (
+            Path(gui).absolute(),
+            Path("/paradicms") / "gui" / "app" / gui,
+        ):
+            if gui_dir_path.is_dir():
+                self.__logger.debug("gui_dir_path %s exists, using", gui_dir_path)
+                gui = gui_dir_path
+                break
+            else:
+                self.__logger.debug("gui_dir_path %s does not exist", gui_dir_path)
+
         self.__logger.info(
             "GUI loader: gui=%s, deploy path=%s", gui, gui_deploy_dir_path
         )
