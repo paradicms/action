@@ -1,11 +1,14 @@
-name: 'paradicms etl'
-description: 'Run a paradicms ETL pipeline'
-author: 'Minor Gordon'
+name: "paradicms etl"
+description: "Run a paradicms ETL pipeline"
+author: "Minor Gordon"
 branding:
-  icon: 'loader'
+  icon: "loader"
 inputs:
   debug:
     description: Debug the action
+    required: false
+  gui_base_url_path:
+    description: Next.js basePath (https://nextjs.org/docs/api-reference/next.config.js/basepath)
     required: false
   id:
     description: Pipeline id. Defaults to the name of the repository.
@@ -23,5 +26,5 @@ inputs:
     description: The desired format of the output data.
     required: true
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
