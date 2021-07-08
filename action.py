@@ -31,6 +31,7 @@ class Action:
         output_data: str
         output_format: str
         debug: str = ""
+        dev: bool = False
         gui_base_url_path: str = ""
 
         @classmethod
@@ -40,17 +41,25 @@ class Action:
                 "-c", is_config_file=True, help="config file path"
             )
             for field in dataclasses.fields(cls):
+                if field.name == "dev":
+                    continue
                 argument_parser.add_argument(
                     "--" + field.name.replace("_", "-"),
                     env_var="INPUT_" + field.name.upper(),
-                    required=field.name != "debug",
+                    required=field.default == dataclasses.MISSING,
                 )
+                field.default
+            # The dev argument can only be supplied manually from the command line.
+            # It makes no sense to run the Next.js dev server ("next dev") in the GitHub Action.
+            argument_parser.add_argument("--dev", action="store_true")
             args = argument_parser.parse_args()
             kwds = {
                 key: value
                 for key, value in vars(args).items()
-                if value and value.strip()
+                if isinstance(value, str) and value.strip()
             }
+            if args.dev:
+                kwds["dev"] = True
             for ignore_key in ("c",):
                 kwds.pop(ignore_key, None)
             if "id" not in kwds:
@@ -59,7 +68,7 @@ class Action:
 
         def __post_init__(self):
             for field in dataclasses.fields(self):
-                if field.name == "debug":
+                if field.name in ("debug", "dev"):
                     continue
                 value = getattr(self, field.name)
                 if not value.strip():
@@ -114,6 +123,7 @@ class Action:
                 copy=True,
                 gui_deploy_dir_path=gui_deploy_dir_path,
             ),
+            dev=self.__inputs.dev,
             loaded_data_dir_path=self.__temp_dir_path,
             gui=gui,
             pipeline_id=self.__pipeline_id,
@@ -145,7 +155,7 @@ class Action:
             transformer=MarkdownDirectoryTransformer(
                 pipeline_id=self.__pipeline_id,
             ),
-            validate_transform=False
+            validate_transform=False,
         )
 
     def __create_pipeline(self) -> _Pipeline:
