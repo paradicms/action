@@ -1,8 +1,8 @@
-# Paradicms Extract-Transform-Load (ETL) Docker action
+# paradicms/gui Docker action
 
-This action executes a Paradicms ETL pipeline.
+This action executes builds a Paradicms Graphical User Interface (GUI) in a GitHub Action.
 
-## Inputs
+<!-- ## Inputs
 
 ### `data-folder`
 
@@ -14,8 +14,9 @@ This action executes a Paradicms ETL pipeline.
 
 The time we greeted you. -->
 
-## Example usage
+<!-- ## Example usage
 
 uses: paradicms/etl-action@v1
 with:
-  data-folder: data
+  data-folder: data -->
+ -->
