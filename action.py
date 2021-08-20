@@ -13,8 +13,8 @@ from paradicms_etl.extractors.markdown_directory_extractor import (
     MarkdownDirectoryExtractor,
 )
 from paradicms_etl._loader import _Loader
-from paradicms_etl.loaders.gui.fs_gui_deployer import FsGuiDeployer
-from paradicms_etl.loaders.gui.gui_loader import GuiLoader
+from paradicms_gui.deployers.fs_deployer import FsDeployer
+from paradicms_gui.loaders.gui_loader import GuiLoader
 from paradicms_etl.loaders.rdf_file_loader import RdfFileLoader
 from paradicms_etl._pipeline import _Pipeline
 from paradicms_etl.transformers.markdown_directory_transformer import (
@@ -87,45 +87,45 @@ class Action:
 
     def __create_gui_loader(self, *, output_format):
         if output_format == "gui":
-            gui = "material-ui-union"
+            app = "material-ui-union"
         elif output_format.endswith("-gui"):
-            gui = output_format[: -len("-gui")]
+            app = output_format[: -len("-gui")]
         else:
             raise NotImplementedError
 
-        gui_deploy_dir_path = Path(self.__inputs.output_data).absolute()
+        deploy_dir_path = Path(self.__inputs.output_data).absolute()
 
-        for gui_dir_path in (
-            Path(gui).absolute(),
-            Path("/paradicms") / "gui" / "app" / gui,
+        for app_dir_path in (
+            Path(app).absolute(),
+            Path("/paradicms") / "gui" / "app" / app,
         ):
-            if gui_dir_path.is_dir():
-                self.__logger.debug("gui_dir_path %s exists, using", gui_dir_path)
-                gui = gui_dir_path
+            if app_dir_path.is_dir():
+                self.__logger.debug("app_dir_path %s exists, using", app_dir_path)
+                app = app_dir_path
                 break
             else:
-                self.__logger.debug("gui_dir_path %s does not exist", gui_dir_path)
+                self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
         self.__logger.info(
-            "GUI loader: gui=%s, deploy path=%s, base URL path=%s",
-            gui,
-            gui_deploy_dir_path,
+            "GUI loader: app=%s, deploy path=%s, base URL path=%s",
+            app,
+            deploy_dir_path,
             self.__inputs.gui_base_url_path,
         )
 
         return GuiLoader(
+            app=app,
             base_url_path=self.__inputs.gui_base_url_path,
-            deployer=FsGuiDeployer(
+            deployer=FsDeployer(
                 # We're running in an environment that's never been used before, so no need to archive
                 archive=False,
                 # We're also running in Docker, which usually means that the GUI's out directory is on a different mount
                 # than the directory we're "deploying" to, and we need to use copy instead of rename.
                 copy=True,
-                gui_deploy_dir_path=gui_deploy_dir_path,
+                deploy_dir_path=deploy_dir_path,
             ),
             dev=self.__inputs.dev,
             loaded_data_dir_path=self.__temp_dir_path,
-            gui=gui,
             pipeline_id=self.__pipeline_id,
         )
 
