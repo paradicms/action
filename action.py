@@ -32,6 +32,7 @@ class Action:
         output_format: str
         debug: str = ""
         dev: bool = False
+        gui_configuration_json_file_path: str = ""
         gui_base_url_path: str = ""
 
         @classmethod
@@ -68,7 +69,7 @@ class Action:
 
         def __post_init__(self):
             for field in dataclasses.fields(self):
-                if field.name in ("debug", "dev"):
+                if field.name in ("debug", "dev", "gui_base_url_path", "gui_configuration_json_file_path"):
                     continue
                 value = getattr(self, field.name)
                 if not value.strip():
@@ -106,16 +107,26 @@ class Action:
             else:
                 self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
+        if self.__inputs.gui_configuration_json_file_path is not None:
+            configuration_json_file_path = Path(self.__inputs.gui_configuration_json_file_path).absolute()
+            if not configuration_json_file_path.is_file():
+                raise ValueError("configuration JSON file %s does not exist or is not a file" % configuration_json_file_path)
+        else:
+            configuration_json_file_path = None
+
+
         self.__logger.info(
-            "GUI loader: app=%s, deploy path=%s, base URL path=%s",
+            "GUI loader: app=%s, deploy path=%s, base URL path=%s, configuration_json_file_path=%s",
             app,
             deploy_dir_path,
             self.__inputs.gui_base_url_path,
+            configuration_json_file_path
         )
 
         return GuiLoader(
             app=app,
             base_url_path=self.__inputs.gui_base_url_path,
+            configuration_json_file_path=configuration_json_file_path,
             deployer=FsDeployer(
                 # We're running in an environment that's never been used before, so no need to archive
                 archive=False,
