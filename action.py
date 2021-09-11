@@ -69,7 +69,7 @@ class Action:
 
         def __post_init__(self):
             for field in dataclasses.fields(self):
-                if field.name in ("debug", "dev", "gui_base_url_path", "gui_configuration_json_file_path"):
+                if field.name in ("base_url_path", "configuration_json_file_path", "debug", "dev"):
                     continue
                 value = getattr(self, field.name)
                 if not value.strip():
@@ -102,7 +102,7 @@ class Action:
             else:
                 self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
-        if self.__inputs.configuration_json_file_path is not None:
+        if self.__inputs.configuration_json_file_path:
             configuration_json_file_path = Path(self.__inputs.configuration_json_file_path).absolute()
             if not configuration_json_file_path.is_file():
                 raise ValueError("configuration JSON file %s does not exist or is not a file" % configuration_json_file_path)
