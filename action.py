@@ -30,10 +30,10 @@ class Action:
         input_format: str
         output_data: str
         output_format: str
+        configuration_json_file_path: str = ""
+        base_url_path: str = ""
         debug: str = ""
         dev: bool = False
-        gui_configuration_json_file_path: str = ""
-        gui_base_url_path: str = ""
 
         @classmethod
         def from_args(cls):
@@ -86,13 +86,8 @@ class Action:
         self.__pipeline_id = self.__inputs.id
         self.__temp_dir_path = temp_dir_path
 
-    def __create_gui_loader(self, *, output_format):
-        if output_format == "gui":
-            app = "material-ui-union"
-        elif output_format.endswith("-gui"):
-            app = output_format[: -len("-gui")]
-        else:
-            raise NotImplementedError
+    def __create_loader(self) -> _Loader:
+        app = self.__inputs.output_format.lower()
 
         deploy_dir_path = Path(self.__inputs.output_data).absolute()
 
@@ -107,25 +102,24 @@ class Action:
             else:
                 self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
-        if self.__inputs.gui_configuration_json_file_path is not None:
-            configuration_json_file_path = Path(self.__inputs.gui_configuration_json_file_path).absolute()
+        if self.__inputs.configuration_json_file_path is not None:
+            configuration_json_file_path = Path(self.__inputs.configuration_json_file_path).absolute()
             if not configuration_json_file_path.is_file():
                 raise ValueError("configuration JSON file %s does not exist or is not a file" % configuration_json_file_path)
         else:
             configuration_json_file_path = None
 
-
         self.__logger.info(
             "GUI loader: app=%s, deploy path=%s, base URL path=%s, configuration_json_file_path=%s",
             app,
             deploy_dir_path,
-            self.__inputs.gui_base_url_path,
+            self.__inputs.base_url_path,
             configuration_json_file_path
         )
 
         return GuiLoader(
             app=app,
-            base_url_path=self.__inputs.gui_base_url_path,
+            base_url_path=self.__inputs.base_url_path,
             configuration_json_file_path=configuration_json_file_path,
             deployer=FsDeployer(
                 # We're running in an environment that's never been used before, so no need to archive
@@ -139,15 +133,6 @@ class Action:
             loaded_data_dir_path=self.__temp_dir_path,
             pipeline_id=self.__pipeline_id,
         )
-
-    def __create_loader(self) -> _Loader:
-        output_format = self.__inputs.output_format.lower()
-        if output_format == "gui" or output_format.endswith("-gui"):
-            return self.__create_gui_loader(output_format=output_format)
-        elif output_format == "rdf" or output_format.endswith("rdf"):
-            return self.__create_rdf_file_loader(output_format=output_format)
-        else:
-            raise NotImplementedError(self.__inputs.output_format)
 
     def __create_markdown_directory_pipeline(self, *, loader: _Loader) -> _Pipeline:
         extracted_data_dir_path = Path(self.__inputs.input_data)
