@@ -151,7 +151,6 @@ class Action:
             transformer=MarkdownDirectoryTransformer(
                 pipeline_id=self.__pipeline_id,
             ),
-            validate_transform=False,
         )
 
     def __create_pipeline(self) -> _Pipeline:
