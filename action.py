@@ -30,7 +30,7 @@ class Action:
         input_format: str
         output_data: str
         output_format: str
-        configuration_json_file_path: str = ""
+        configuration_file_path: str = ""
         base_url_path: str = ""
         debug: str = ""
         dev: bool = False
@@ -39,7 +39,7 @@ class Action:
         def from_args(cls):
             argument_parser = ArgParser()
             argument_parser.add_argument(
-                "-c", is_config_file=True, help="config file path"
+                "-c", is_config_file=True, help="path to a file to read arguments from"
             )
             for field in dataclasses.fields(cls):
                 if field.name == "dev":
@@ -69,7 +69,7 @@ class Action:
 
         def __post_init__(self):
             for field in dataclasses.fields(self):
-                if field.name in ("base_url_path", "configuration_json_file_path", "debug", "dev"):
+                if field.name in ("base_url_path", "configuration_file_path", "debug", "dev"):
                     continue
                 value = getattr(self, field.name)
                 if not value.strip():
@@ -102,25 +102,25 @@ class Action:
             else:
                 self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
-        if self.__inputs.configuration_json_file_path:
-            configuration_json_file_path = Path(self.__inputs.configuration_json_file_path).absolute()
-            if not configuration_json_file_path.is_file():
-                raise ValueError("configuration JSON file %s does not exist or is not a file" % configuration_json_file_path)
+        if self.__inputs.configuration_file_path:
+            configuration_file_path = Path(self.__inputs.configuration_file_path).absolute()
+            if not configuration_file_path.is_file():
+                raise ValueError("configuration file %s does not exist or is not a file" % configuration_file_path)
         else:
-            configuration_json_file_path = None
+            configuration_file_path = None
 
         self.__logger.info(
-            "GUI loader: app=%s, deploy path=%s, base URL path=%s, configuration_json_file_path=%s",
+            "GUI loader: app=%s, deploy path=%s, base URL path=%s, configuration_file_path=%s",
             app,
             deploy_dir_path,
             self.__inputs.base_url_path,
-            configuration_json_file_path
+            configuration_file_path
         )
 
         return GuiLoader(
             app=app,
             base_url_path=self.__inputs.base_url_path,
-            configuration_json_file_path=configuration_json_file_path,
+            configuration_file_path=configuration_file_path,
             deployer=FsDeployer(
                 # We're running in an environment that's never been used before, so no need to archive
                 archive=False,
