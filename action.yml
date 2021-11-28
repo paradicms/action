@@ -7,7 +7,7 @@ inputs:
   base_url_path:
     description: Next.js basePath (https://nextjs.org/docs/api-reference/next.config.js/basepath)
     required: false
-  configuration_json_file_path:
+  configuration_file_path:
     description: Path to a configuration.json file, which controls the static site generator.
     required: false
   debug:
