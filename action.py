@@ -12,11 +12,11 @@ from typing import Optional
 from paradicms_etl.extractors.markdown_directory_extractor import (
     MarkdownDirectoryExtractor,
 )
-from paradicms_etl._loader import _Loader
+from paradicms_etl.loader import Loader
 from paradicms_gui.deployers.fs_deployer import FsDeployer
 from paradicms_gui.loaders.gui_loader import GuiLoader
 from paradicms_etl.loaders.rdf_file_loader import RdfFileLoader
-from paradicms_etl._pipeline import _Pipeline
+from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.markdown_directory_transformer import (
     MarkdownDirectoryTransformer,
 )
@@ -69,7 +69,12 @@ class Action:
 
         def __post_init__(self):
             for field in dataclasses.fields(self):
-                if field.name in ("base_url_path", "configuration_file_path", "debug", "dev"):
+                if field.name in (
+                    "base_url_path",
+                    "configuration_file_path",
+                    "debug",
+                    "dev",
+                ):
                     continue
                 value = getattr(self, field.name)
                 if not value.strip():
@@ -86,7 +91,7 @@ class Action:
         self.__pipeline_id = self.__inputs.id
         self.__temp_dir_path = temp_dir_path
 
-    def __create_loader(self) -> _Loader:
+    def __create_loader(self) -> Loader:
         app = self.__inputs.output_format.lower()
 
         deploy_dir_path = Path(self.__inputs.output_data).absolute()
@@ -103,9 +108,14 @@ class Action:
                 self.__logger.debug("app_dir_path %s does not exist", app_dir_path)
 
         if self.__inputs.configuration_file_path:
-            configuration_file_path = Path(self.__inputs.configuration_file_path).absolute()
+            configuration_file_path = Path(
+                self.__inputs.configuration_file_path
+            ).absolute()
             if not configuration_file_path.is_file():
-                raise ValueError("configuration file %s does not exist or is not a file" % configuration_file_path)
+                raise ValueError(
+                    "configuration file %s does not exist or is not a file"
+                    % configuration_file_path
+                )
         else:
             configuration_file_path = None
 
@@ -114,7 +124,7 @@ class Action:
             app,
             deploy_dir_path,
             self.__inputs.base_url_path,
-            configuration_file_path
+            configuration_file_path,
         )
 
         return GuiLoader(
@@ -134,14 +144,14 @@ class Action:
             pipeline_id=self.__pipeline_id,
         )
 
-    def __create_markdown_directory_pipeline(self, *, loader: _Loader) -> _Pipeline:
+    def __create_markdown_directory_pipeline(self, *, loader: Loader) -> Pipeline:
         extracted_data_dir_path = Path(self.__inputs.input_data)
         if not extracted_data_dir_path.is_dir():
             raise ValueError(
                 f"Markdown directory {extracted_data_dir_path} does not exist"
             )
 
-        return _Pipeline(
+        return Pipeline(
             extractor=MarkdownDirectoryExtractor(
                 extracted_data_dir_path=extracted_data_dir_path,
                 pipeline_id=self.__pipeline_id,
@@ -153,7 +163,7 @@ class Action:
             ),
         )
 
-    def __create_pipeline(self) -> _Pipeline:
+    def __create_pipeline(self) -> Pipeline:
         loader = self.__create_loader()
 
         input_format = self.__inputs.input_format.lower()
