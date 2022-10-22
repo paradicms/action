@@ -13,8 +13,8 @@ from paradicms_etl.extractors.markdown_directory_extractor import (
     MarkdownDirectoryExtractor,
 )
 from paradicms_etl.loader import Loader
-from paradicms_gui.deployers.fs_deployer import FsDeployer
-from paradicms_gui.loaders.gui_loader import GuiLoader
+from paradicms_ssg.deployers.fs_deployer import FsDeployer
+from paradicms_ssg.loaders.app_loader import AppLoader
 from paradicms_etl.loaders.rdf_file_loader import RdfFileLoader
 from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.markdown_directory_transformer import (
@@ -127,7 +127,7 @@ class Action:
             configuration_file_path,
         )
 
-        return GuiLoader(
+        return AppLoader(
             app=app,
             base_url_path=self.__inputs.base_url_path,
             configuration_file_path=configuration_file_path,
