@@ -1,5 +1,5 @@
-name: "paradicms gui"
-description: "Extract, transform, and load data into paradicms-compatible RDF and generate a static site from it"
+name: "paradicms"
+description: "Execute a Paradicms ETL pipeline"
 author: "Minor Gordon"
 branding:
   icon: "loader"
