@@ -98,7 +98,7 @@ class Action:
 
         for app_dir_path in (
             Path(app).absolute(),
-            Path("/paradicms") / "gui" / "app" / app,
+            Path("/paradicms") / "app" / app,
         ):
             if app_dir_path.is_dir():
                 self.__logger.debug("app_dir_path %s exists, using", app_dir_path)
