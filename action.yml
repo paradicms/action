@@ -1,32 +1,30 @@
-name: "paradicms"
-description: "Execute a Paradicms ETL pipeline"
+name: "Generate a static site using Paradicms"
+description: "Generate a static site using Paradicms"
 author: "Minor Gordon"
 branding:
   icon: "loader"
 inputs:
-  base_url_path:
+  app:
+    description: Directory name of a well-known paradicms app (e.g., work-search) or path to the root directory of another app
+    required: true
+  app_base_url_path:
     description: Next.js basePath (https://nextjs.org/docs/api-reference/next.config.js/basepath)
     required: false
-  configuration_file_path:
+  app_configuration_file_path:
     description: Path to a configuration.json file, which controls the static site generator.
+    required: false
+  app_export_directory_path:
+    description: Path to the directory to export the Next.js generated site to
+    default: "_site/"
     required: false
   debug:
     description: Debug the action
     required: false
-  id:
+  pipeline_id:
     description: Pipeline id. Defaults to the name of the repository.
     required: false
-  input_data:
-    description: Path to your input data. It can be a directory or a file, depending on the input format.
-    required: true
-  input_format:
-    description: The format of the input data.
-    required: true
-  output_data:
-    description: Path to your output data. It can be a directory or a file, depending on the output format.
-    required: true
-  output_format:
-    description: The desired format of the output data.
+  spreadsheet_id:
+    description: Google Sheets spreadsheet id, must be publicly accessible to anyone with the link
     required: true
 runs:
   using: "docker"
