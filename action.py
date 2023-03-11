@@ -33,11 +33,9 @@ class Action(GitHubAction):
         self.__inputs = inputs
 
     @classmethod
-    def main(cls, inputs: Optional[Inputs] = None):
-        if inputs is None:
-            inputs = cls.Inputs.from_args()
+    def main(cls):
         with TemporaryDirectory() as temp_dir:
-            cls(inputs=inputs, temp_dir_path=Path(temp_dir)).__main()
+            cls(inputs=cls.Inputs.from_args(), temp_dir_path=Path(temp_dir)).__main()
 
     def __main(self):
         # https://docs.google.com/spreadsheets/d/1j2oaMvMxY4pnXO-sEH_fky2R2gm6TQeIev_Q8rVOD4M/edit?usp=sharing
