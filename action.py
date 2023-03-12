@@ -12,6 +12,7 @@ from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtract
 from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.spreadsheet_transformer import SpreadsheetTransformer
 from paradicms_ssg.git_hub_action import GitHubAction
+from paradicms_ssg.models.root_model_classes_by_name import ROOT_MODEL_CLASSES_BY_NAME
 
 
 class Action(GitHubAction):
@@ -68,7 +69,10 @@ class Action(GitHubAction):
             extractor=extractor,
             id=self.__inputs.pipeline_id,
             loader=self._create_loader(),
-            transformer=SpreadsheetTransformer(pipeline_id=self.__inputs.pipeline_id),
+            transformer=SpreadsheetTransformer(
+                pipeline_id=self.__inputs.pipeline_id,
+                root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
+            ),
         ).extract_transform_load()
 
 

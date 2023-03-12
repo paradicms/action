@@ -4,10 +4,7 @@ author: "Minor Gordon"
 branding:
   icon: "loader"
 inputs:
-  app:
-    description: Directory name of a well-known Paradicms app (e.g., work-search) or path to the root directory of another app
-    required: true
-  app_configuration:
+  app_configuration_file_path:
     description: Path to an app configuration file, which controls the static site generator
     required: false
   debug:
