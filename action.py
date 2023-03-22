@@ -10,8 +10,8 @@ from paradicms_etl.extractors.excel_2010_extractor import Excel2010Extractor
 from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtractor
 from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.spreadsheet_transformer import SpreadsheetTransformer
-from paradicms_ssg.git_hub_action import GitHubAction
-from paradicms_ssg.github_actions_inputs import GitHubActionInputs
+from paradicms_ssg.github_action import GitHubAction
+from paradicms_ssg.github_action_inputs import GitHubActionInputs
 from paradicms_ssg.models.root_model_classes_by_name import ROOT_MODEL_CLASSES_BY_NAME
 
 
