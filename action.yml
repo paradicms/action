@@ -1,15 +1,16 @@
-name: "Generate a static site from a Paradicms-formatted spreadsheet"
-description: "Generate a static site from a Paradicms-formatted spreadsheet"
-author: "Minor Gordon"
+author: Minor Gordon
 branding:
-  icon: "loader"
+  icon: loader
+description: Generate a static site from a Paradicms-formatted spreadsheet.
 inputs:
   app_configuration_file_path:
-    description: Path to an app configuration file, which controls the static site generator
+    description: Path to an app configuration file, which controls the static site
+      generator
     required: false
   build_directory_path:
-    default: "_site"
-    description: Path to a directory where the generated static assets (CSS, HTML, JavaScript) should be placed
+    default: _site
+    description: Path to a directory where the generated static assets (CSS, HTML,
+      JavaScript) should be placed
     required: false
   debug:
     description: Debug the action
@@ -18,8 +19,10 @@ inputs:
     description: Pipeline id. Defaults to the name of the repository.
     required: false
   spreadsheet:
-    description: Google Sheets spreadsheet id, Google Sheet URL, or path to an Excel 2010 (.xlsx) file
+    description: Google Sheets spreadsheet id, Google Sheet URL, or path to an Excel
+      2010 (.xlsx) file
     required: true
+name: Generate a static site from a Paradicms-formatted spreadsheet.
 runs:
-  using: "docker"
-  image: "Dockerfile"
+  image: Dockerfile
+  using: docker
