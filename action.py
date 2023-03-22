@@ -36,7 +36,6 @@ class Action(GitHubAction[_Inputs]):
         return _Inputs
 
     def _run(self):
-        # https://docs.google.com/spreadsheets/d/1j2oaMvMxY4pnXO-sEH_fky2R2gm6TQeIev_Q8rVOD4M/edit?usp=sharing
         extractor: Optional[Extractor] = None
         try:
             spreadsheet_url = urlparse(self._inputs.spreadsheet)
