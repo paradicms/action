@@ -69,7 +69,7 @@ class Action(GitHubAction[_Inputs]):
                 pipeline_id=self._inputs.pipeline_id,
                 root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
             ),
-        ).extract_transform_load()
+        ).extract_transform_load(force_extract=self._force_extract)
 
 
 if __name__ == "__main__":
