@@ -5,40 +5,37 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
+from etl_github_action import EtlGitHubAction
 from paradicms_etl.extractor import Extractor
 from paradicms_etl.extractors.excel_2010_extractor import Excel2010Extractor
 from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtractor
 from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.spreadsheet_transformer import SpreadsheetTransformer
-from paradicms_ssg.github_action import GitHubAction
-from paradicms_ssg.github_action_inputs import GitHubActionInputs
 from paradicms_ssg.models.root_model_classes_by_name import ROOT_MODEL_CLASSES_BY_NAME
 
 
-@dataclass(frozen=True)
-class _Inputs(GitHubActionInputs):
-    spreadsheet: str = dataclasses.field(
-        default=GitHubActionInputs.REQUIRED,
-        metadata={
-            "description": "Google Sheets spreadsheet id, Google Sheet URL, or path to an Excel 2010 (.xlsx) file"
-        },
-    )
-
-
-class Action(GitHubAction[_Inputs]):
+class Action(EtlGitHubAction):
     """
-    Generate a static site from a Paradicms-formatted spreadsheet.
+    Extract, transform, and load data from a Paradicms-formatted spreadsheet.
     """
 
-    @classmethod
-    @property
-    def _inputs_class(cls):
-        return _Inputs
+    @dataclass(frozen=True)
+    class Inputs(EtlGitHubAction.Inputs):
+        spreadsheet: str = dataclasses.field(
+            default=EtlGitHubAction.Inputs.REQUIRED,
+            metadata={
+                "description": "Google Sheets spreadsheet id, Google Sheet URL, or path to an Excel 2010 (.xlsx) file"
+            },
+        )
+
+    def __init__(self, *, spreadsheet: str, **kwds):
+        EtlGitHubAction.__init__(self, **kwds)
+        self.__spreadsheet = spreadsheet
 
     def _run(self):
         extractor: Optional[Extractor] = None
         try:
-            spreadsheet_url = urlparse(self._inputs.spreadsheet)
+            spreadsheet_url = urlparse(self.__spreadsheet)
             if spreadsheet_url.hostname == "docs.google.com":
                 if spreadsheet_url.path.startswith("/spreadsheets/d/"):
                     extractor = GoogleSheetsExtractor(
@@ -50,7 +47,7 @@ class Action(GitHubAction[_Inputs]):
         except ValueError:
             pass
 
-        spreadsheet_file_path = Path(self._inputs.spreadsheet)
+        spreadsheet_file_path = Path(self.__spreadsheet)
         if spreadsheet_file_path.is_file():
             if str(spreadsheet_file_path).lower().endswith(".xlsx"):
                 extractor = Excel2010Extractor(xlsx_file_path=spreadsheet_file_path)
@@ -58,15 +55,15 @@ class Action(GitHubAction[_Inputs]):
         if extractor is None:
             extractor = GoogleSheetsExtractor(
                 extracted_data_dir_path=self._extracted_data_dir_path,
-                spreadsheet_id=self._inputs.spreadsheet,
+                spreadsheet_id=self.__spreadsheet,
             )
 
         Pipeline(
             extractor=extractor,
-            id=self._inputs.pipeline_id,
-            loader=self._create_loader(),
+            id=self._pipeline_id,
+            loader=self._loader,
             transformer=SpreadsheetTransformer(
-                pipeline_id=self._inputs.pipeline_id,
+                pipeline_id=self._pipeline_id,
                 root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
             ),
         ).extract_transform_load(force_extract=self._force_extract)
