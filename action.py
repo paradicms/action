@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
-from etl_github_action import EtlGitHubAction
+from paradicms_etl.etl_github_action import EtlGitHubAction
 from paradicms_etl.extractor import Extractor
 from paradicms_etl.extractors.excel_2010_extractor import Excel2010Extractor
 from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtractor
