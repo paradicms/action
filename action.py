@@ -39,7 +39,7 @@ class Action(EtlGitHubAction):
             if spreadsheet_url.hostname == "docs.google.com":
                 if spreadsheet_url.path.startswith("/spreadsheets/d/"):
                     extractor = GoogleSheetsExtractor(
-                        extracted_data_dir_path=self._extracted_data_dir_path,
+                        cache_dir_path=self._cache_dir_path,
                         spreadsheet_id=spreadsheet_url.path[
                             len("/spreadsheets/d/") :
                         ].split("/", 1)[0],
@@ -54,7 +54,7 @@ class Action(EtlGitHubAction):
 
         if extractor is None:
             extractor = GoogleSheetsExtractor(
-                extracted_data_dir_path=self._extracted_data_dir_path,
+                cache_dir_path=self._cache_dir_path,
                 spreadsheet_id=self.__spreadsheet,
             )
 
