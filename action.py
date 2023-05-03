@@ -58,7 +58,7 @@ class Action(EtlGitHubAction):
                 spreadsheet_id=self.__spreadsheet,
             )
 
-        Pipeline(
+        for _ in Pipeline(
             extractor=extractor,
             id=self._pipeline_id,
             loader=self._loader,
@@ -66,7 +66,8 @@ class Action(EtlGitHubAction):
                 pipeline_id=self._pipeline_id,
                 root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
             ),
-        ).extract_transform_load(force_extract=self._force_extract)
+        )(force_extract=self._force_extract):
+            pass
 
 
 if __name__ == "__main__":
