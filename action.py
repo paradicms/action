@@ -5,13 +5,10 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
-from more_itertools import consume
-
 from paradicms_etl.etl_github_action import EtlGitHubAction
 from paradicms_etl.extractor import Extractor
 from paradicms_etl.extractors.excel_2010_extractor import Excel2010Extractor
 from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtractor
-from paradicms_etl.pipeline import Pipeline
 from paradicms_etl.transformers.spreadsheet_transformer import SpreadsheetTransformer
 from paradicms_ssg.models.root_model_classes_by_name import ROOT_MODEL_CLASSES_BY_NAME
 
@@ -60,16 +57,12 @@ class Action(EtlGitHubAction):
                 spreadsheet_id=self.__spreadsheet,
             )
 
-        consume(
-            Pipeline(
-                extractor=extractor,
-                id=self._pipeline_id,
-                loader=self._loader,
-                transformer=SpreadsheetTransformer(
-                    pipeline_id=self._pipeline_id,
-                    root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
-                ),
-            )(force_extract=self._force_extract)
+        self._run_pipeline(
+            extractor=extractor,
+            transformer=SpreadsheetTransformer(
+                pipeline_id=self._pipeline_id,
+                root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
+            ),
         )
 
 
