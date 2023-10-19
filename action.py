@@ -10,7 +10,6 @@ from paradicms_etl.extractor import Extractor
 from paradicms_etl.extractors.excel_2010_extractor import Excel2010Extractor
 from paradicms_etl.extractors.google_sheets_extractor import GoogleSheetsExtractor
 from paradicms_etl.transformers.spreadsheet_transformer import SpreadsheetTransformer
-from paradicms_ssg.models.root_model_classes_by_name import ROOT_MODEL_CLASSES_BY_NAME
 
 
 class Action(EtlGitHubAction):
@@ -59,10 +58,7 @@ class Action(EtlGitHubAction):
 
         self._run_pipeline(
             extractor=extractor,
-            transformer=SpreadsheetTransformer(
-                pipeline_id=self._pipeline_id,
-                root_model_classes_by_name=ROOT_MODEL_CLASSES_BY_NAME,
-            ),
+            transformer=SpreadsheetTransformer(pipeline_id=self._pipeline_id),
         )
 
 
